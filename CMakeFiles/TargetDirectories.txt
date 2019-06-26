@@ -1,0 +1,3 @@
+/Users/dakersnar/Documents/Random Coding Projects/rAnimate/CMakeFiles/rebuild_cache.dir
+/Users/dakersnar/Documents/Random Coding Projects/rAnimate/CMakeFiles/edit_cache.dir
+/Users/dakersnar/Documents/Random Coding Projects/rAnimate/CMakeFiles/hello.dir
