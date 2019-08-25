@@ -12,7 +12,7 @@ pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let processes: Vec<process::Process> = Vec::new();
     let start_point = Point::new(100,100);
-    let kernel = kernel::Kernel::init(sdl_context, processes, start_point);
+    let mut kernel = kernel::Kernel::init(sdl_context, processes, start_point);
     kernel.start();
     
 }
