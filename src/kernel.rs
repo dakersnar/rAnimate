@@ -6,6 +6,10 @@ use sdl2::event::Event;
 use sdl2::rect::Point;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
+use sdl2::video::WindowSurfaceRef;
+
+use sdl2::pixels::PixelFormatEnum;
+use sdl2::surface::Surface;
 
 use std::time::Duration;
 
@@ -31,13 +35,16 @@ impl Kernel {
 
     pub fn start(mut self) {
         let video_subsystem = self.sdl_context.video().unwrap();
-        let window = video_subsystem.window("rAnimate", 800, 600)
+        let x = 800;
+        let y = 600;
+        let window = video_subsystem.window("rAnimate", x, y)
             .position_centered()
             .build()
             .unwrap();
     
-        let mut canvas = window.into_canvas().build().unwrap();
-    
+        let mut canvas = window.into_canvas().software().build().unwrap();
+
+        let mut surface = Surface::new(x, y, PixelFormatEnum::RGB24).unwrap();
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
         canvas.present();
@@ -61,19 +68,22 @@ impl Kernel {
             }
             
             // Every iteration the kernel gives control to each process
-            self.update(&mut canvas);
-            
+            canvas.set_draw_color(Color::RGB(0, 0, 0));
+            canvas.clear();
+            let mut canvas_surface = canvas.window().surface(&event_pump).unwrap();
+            self.update(&mut canvas_surface, &mut surface);
+
             canvas.present();
             
             ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         }
     }
 
-    fn update(&mut self, canvas: &mut Canvas<Window>) {
+    fn update(&mut self, canvas_surface: &mut WindowSurfaceRef, surface: &mut Surface) {
 
         for process in &mut self.processes {
-            let syscall = process.run(canvas);
-            canvas.set_draw_color(Color::RGB(255, 210, 0));
+            //canvas.set_draw_color(Color::RGB(255, 210, 0));
+            let syscall = process.run(canvas_surface, surface);
         }
 
     }
