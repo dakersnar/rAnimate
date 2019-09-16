@@ -50,7 +50,7 @@ impl Kernel {
         canvas.present();
 
         // Add the first process to the process vector
-        self.processes.push(Process::init(self.start_point, Point::new(1,2)));
+        self.processes.push(Process::init(self.start_point, 2, Color::RGB(200, 90, 200)));
 
         // Continuously loop, calling update on every iteration
         let mut event_pump = self.sdl_context.event_pump().unwrap();
