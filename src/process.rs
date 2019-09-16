@@ -8,7 +8,7 @@ use sdl2::video::Window;
 use sdl2::video::WindowSurfaceRef;
 use sdl2::surface::Surface;
 
-//use rand::prelude::*;
+use rand::prelude::*;
 
 pub struct Process {
     location: Point,
@@ -51,8 +51,7 @@ impl Process {
 
         //let mut surface_to_canvas = surface.into_canvas().unwrap();
 
-        //let choice = random();
-        let choice = 0.51;
+        let choice: f32 = random();
 
         // TODO: make a match statement
         if choice <= self.weights[0] { 
@@ -86,15 +85,15 @@ impl Process {
 
     fn turn_cw(&mut self) {
         if self.direction_idx == 0 { 
-            self.direction_idx = self.directions.len();
+            self.direction_idx = self.directions.len() - 1;
         } else {
-            self.direction_idx += 1;
+            self.direction_idx -= 1;
         }
 
     }
 
     fn turn_ccw(&mut self) {
-        if self.direction_idx == self.directions.len() { 
+        if self.direction_idx == self.directions.len() - 1 { 
             self.direction_idx = 0;
         } else {
             self.direction_idx += 1;
