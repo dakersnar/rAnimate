@@ -21,6 +21,14 @@ pub enum SysCall {
     Noop,
 }
 
+pub fn x_window_max() -> u32 {
+    800
+}
+
+pub fn y_window_max() -> u32 {
+    600
+}
+
 pub struct Kernel {
     sdl_context: sdl2::Sdl,
     processes: Vec<Process>,
@@ -35,8 +43,8 @@ impl Kernel {
 
     pub fn start(mut self) {
         let video_subsystem = self.sdl_context.video().unwrap();
-        let x = 800;
-        let y = 600;
+        let x = x_window_max();
+        let y = y_window_max();
         let window = video_subsystem.window("rAnimate", x, y)
             .position_centered()
             .build()
@@ -75,15 +83,42 @@ impl Kernel {
 
             canvas.present();
             
-            ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+            //::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         }
     }
 
     fn update(&mut self, canvas_surface: &mut WindowSurfaceRef, surface: &mut Surface) {
 
+        let mut i = 0;
+        let mut new_procs: Vec<Process> = Vec::new();
+        let mut remove_procs: Vec<usize> = Vec::new();
         for process in &mut self.processes {
             //canvas.set_draw_color(Color::RGB(255, 210, 0));
             let syscall = process.run(canvas_surface, surface);
+
+            match syscall {
+                SysCall::Fork => {
+                    new_procs.push(Process::init(process.get_location(), 2, Color::RGB(200, 90, 200)));
+                }
+                SysCall::Exit => {
+                    remove_procs.push(i);
+                }
+                SysCall::Noop => {
+                    
+                }
+
+            }
+
+            i += 1;
+            
+        }
+
+        for i in remove_procs {
+            self.processes.remove(i);
+        }
+
+        for process in new_procs {
+            self.processes.push(process);
         }
 
     }
